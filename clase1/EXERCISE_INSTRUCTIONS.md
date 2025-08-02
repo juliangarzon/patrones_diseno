@@ -62,7 +62,4 @@ Create a document with your findings following this format:
    - Interface Segregation Principle
    - Dependency Inversion Principle
 
-## Suggested time per file:
-- Total: 30 minutes
-
 Good luck!
