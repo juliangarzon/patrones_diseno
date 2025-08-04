@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción a Patrones y Antipatrones de Diseño</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .slide {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px;
+            margin: 40px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* Title Slide */
+        .title-slide {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .title-slide h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .title-slide h2 {
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .title-slide .author {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        /* Slide Headers */
+        h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #34495e;
+            margin: 30px 0 20px 0;
+        }
+
+        /* Profile Section */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #f6f9fc 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .profile-card h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* Learning Objectives */
+        .objectives-list {
+            display: grid;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .objective-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .objective-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.1);
+        }
+
+        .check-icon {
+            width: 24px;
+            height: 24px;
+            background: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Course Structure */
+        .course-structure {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 40px 0;
+        }
+
+        .structure-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .structure-card h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .structure-card ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .structure-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .structure-card li:last-child {
+            border-bottom: none;
+        }
+
+        /* Project Section */
+        .project-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: scale(1.05);
+        }
+
+        /* SOLID Principles */
+        .solid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .solid-principle {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: help;
+        }
+
+        .solid-principle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--color);
+        }
+
+        .solid-principle:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .solid-letter {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--color);
+            margin-bottom: 15px;
+        }
+
+        .solid-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .solid-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Pattern Elements */
+        .pattern-elements {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .pattern-element {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .pattern-element:hover {
+            transform: scale(1.05);
+        }
+
+        .pattern-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* Antipatterns */
+        .antipattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .antipattern-card {
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .antipattern-card::before {
+            content: '⚠️';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+        }
+
+        .antipattern-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Code Examples */
+        .code-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 25px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-example::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: #4a5568;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .code-example::after {
+            content: '● ● ●';
+            position: absolute;
+            top: 8px;
+            left: 15px;
+            color: #e2e8f0;
+            font-size: 0.8rem;
+        }
+
+        .code-content {
+            margin-top: 20px;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .slide-in {
+            animation: slideIn 0.8s ease-out;
+        }
+
+        /* Tooltips */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: normal;
+            white-space: nowrap;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            max-width: 320px;
+            white-space: normal;
+            line-height: 1.4;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .tooltip-solid {
+            max-width: 280px;
+            text-align: left;
+        }
+
+        .tooltip-metaphor {
+            font-style: italic;
+            color: #ffd700;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+        }
+
+        .tooltip-container:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .pattern-classification-card {
+            transition: all 0.3s ease;
+            cursor: help;
+        }
+
+        .pattern-classification-card:hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px;
+                margin: 20px 0;
+            }
+            
+            .title-slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .profile-grid,
+            .course-structure,
+            .solid-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .pattern-elements {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container">
+        <button class="nav-btn" onclick="previousSlide()">◀ Anterior</button>
+        <button class="nav-btn" onclick="nextSlide()">Siguiente ▶</button>
+    </div>
+
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide">
+            <h1>Introducción a Patrones y Antipatrones de Diseño</h1>
+            <h2>Curso de Patrones de Diseño Orientado a Objetos</h2>
+            <div class="author">Julian Eduardo Garzon Giraldo, MsC</div>
+        </div>
+
+        <!-- Slide 2: About the Professor -->
+        <div class="slide">
+            <h1>¿Quiénes estaremos este semestre?</h1>
+            <div class="profile-grid">
+                <div class="profile-card">
+                    <h3>👨‍👩‍👧‍👦 Vida Personal</h3>
+                    <ul>
+                        <li>✓ Casado</li>
+                        <li>✓ Padre de 2 hijos</li>
+                        <li>✓ 7 gatos 🐱</li>
+                    </ul>
+                </div>
+                <div class="profile-card">
+                    <h3>🎓 Formación</h3>
+                    <ul>
+                        <li>✓ Ingeniero de Sistemas</li>
+                        <li>✓ Máster en Gestión de Informática y Telecomunicaciones</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="profile-card" style="margin-top: 20px;">
+                <h3>💼 Experiencia</h3>
+                <ul>
+                    <li>✓ 18 años trabajando en el sector de tecnología</li>
+                    <li>✓ Desarrollo de software, arquitectura, Datos, Agile Coach</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Learning Objectives -->
+        <div class="slide">
+            <h1>¿Qué aprenderás en este curso?</h1>
+            <div class="objectives-list">
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Diseñar software orientado a objetos de forma profesional</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Aplicar patrones de diseño creacionales, estructurales y de comportamiento</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Identificar y evitar antipatrones comunes</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Investigar nuevos patrones</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Mejorar la mantenibilidad y reutilización del código</div>
+                </div>
+                <div class="objective-item">
+                    <div class="check-icon">✓</div>
+                    <div>Aplicar patrones en un proyecto real paso a paso</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 30px; font-style: italic; color: #666;">
+                📚 Libro referencia: Head First Design Patterns
+            </div>
+        </div>
+
+        <!-- Slide 4: Course Structure -->
+        <div class="slide">
+            <h1>¿Cómo está organizado el curso?</h1>
+            <div class="course-structure">
+                <div class="structure-card">
+                    <h3>📅 Duración y formato</h3>
+                    <ul>
+                        <li>16 semanas</li>
+                        <li>3h clase + 3h trabajo independiente</li>
+                        <li>Modalidad: práctica intensiva</li>
+                    </ul>
+                </div>
+                <div class="structure-card">
+                    <h3>📋 Evaluación</h3>
+                    <ul>
+                        <li>Semana 5: Entrega 1 del proyecto</li>
+                        <li>Semana 10: Entrega 2</li>
+                        <li>Semana 15: Entrega final</li>
+                        <li>Semana 16: Retroalimentación y cierre</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Project Challenge -->
+        <div class="slide">
+            <h1>Tu reto: construir un sistema real aplicando patrones</h1>
+            <div class="project-features">
+                <div class="feature-card">
+                    <h3>👥 Equipo</h3>
+                    <p>2 a 3 personas</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💡 Ideas base</h3>
+                    <p>Sistema modular</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 Evolución</h3>
+                    <p>Semana a semana</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📋 Documentación</h3>
+                    <p>UML y justificación</p>
+                </div>
+            </div>
+            <div style="margin-top: 40px;">
+                <h2>Opciones de sistema:</h2>
+                <ul style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; list-style: none; margin-top: 20px;">
+                    <li style="padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">🛒 Sistema de pedidos</li>
+                    <li style="padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">🎮 Juego simple 2D</li>
+                    <li style="padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">📝 Gestor de tareas o reservas</li>
+                    <li style="padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">💭 Otro que tú propongas</li>
+                </ul>
+                <div style="margin-top: 30px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px;">
+                    <strong>Patrones mínimos requeridos:</strong><br>
+                    1 Creacional • 2 Estructurales • 2 de Comportamiento
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: SOLID Principles -->
+        <div class="slide">
+            <h1>SOLID: la base del buen diseño orientado a objetos</h1>
+            <div style="text-align: center; margin-bottom: 40px;">
+                <p style="font-size: 1.2rem; color: #666; max-width: 800px; margin: 0 auto;">
+                    Conjunto de 5 principios que promueven código mantenible, escalable y comprensible, formulados por Robert C. Martin ("Uncle Bob")
+                </p>
+            </div>
+            <div class="solid-container">
+                <div class="tooltip-container">
+                    <div class="solid-principle" style="--color: #e74c3c;">
+                        <div class="solid-letter">S</div>
+                        <div class="solid-title">Single Responsibility</div>
+                        <div class="solid-description">Una clase, una responsabilidad</div>
+                    </div>
+                    <div class="tooltip tooltip-solid">
+                        <strong>📝 Single Responsibility Principle (SRP)</strong><br><br>
+                        <strong>Explicación:</strong> Una clase debe tener una sola responsabilidad.<br><br>
+                        <div class="tooltip-metaphor">
+                            💡 <strong>Metáfora:</strong> Como un cajón: si guardas todo ahí, encontrar algo es un caos.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tooltip-container">
+                    <div class="solid-principle" style="--color: #f39c12;">
+                        <div class="solid-letter">O</div>
+                        <div class="solid-title">Open/Closed</div>
+                        <div class="solid-description">Abierta a extensión, cerrada a modificación</div>
+                    </div>
+                    <div class="tooltip tooltip-solid">
+                        <strong>🔒 Open/Closed Principle (OCP)</strong><br><br>
+                        <strong>Explicación:</strong> Las clases deben poder extenderse sin modificarse.<br><br>
+                        <div class="tooltip-metaphor">
+                            💡 <strong>Metáfora:</strong> Como agregar una toma triple sin romper la pared.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tooltip-container">
+                    <div class="solid-principle" style="--color: #3498db;">
+                        <div class="solid-letter">L</div>
+                        <div class="solid-title">Liskov Substitution</div>
+                        <div class="solid-description">Las subclases deben poder sustituir a la clase padre</div>
+                    </div>
+                    <div class="tooltip tooltip-solid">
+                        <strong>🔄 Liskov Substitution Principle (LSP)</strong><br><br>
+                        <strong>Explicación:</strong> Una subclase debe comportarse como su clase base.<br><br>
+                        <div class="tooltip-metaphor">
+                            💡 <strong>Metáfora:</strong> Si un gato es un animal, debería poder usarse donde se espera un animal sin romper nada.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tooltip-container">
+                    <div class="solid-principle" style="--color: #9b59b6;">
+                        <div class="solid-letter">I</div>
+                        <div class="solid-title">Interface Segregation</div>
+                        <div class="solid-description">No obligues a implementar lo que no se necesita</div>
+                    </div>
+                    <div class="tooltip tooltip-solid">
+                        <strong>🎛️ Interface Segregation Principle (ISP)</strong><br><br>
+                        <strong>Explicación:</strong> No forzar a implementar lo que no se usa.<br><br>
+                        <div class="tooltip-metaphor">
+                            💡 <strong>Metáfora:</strong> Como un control remoto con 30 botones que solo usas 4.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tooltip-container">
+                    <div class="solid-principle" style="--color: #1abc9c;">
+                        <div class="solid-letter">D</div>
+                        <div class="solid-title">Dependency Inversion</div>
+                        <div class="solid-description">Depende de abstracciones, no de implementaciones</div>
+                    </div>
+                    <div class="tooltip tooltip-solid">
+                        <strong>🔌 Dependency Inversion Principle (DIP)</strong><br><br>
+                        <strong>Explicación:</strong> Depender de abstracciones, no implementaciones concretas.<br><br>
+                        <div class="tooltip-metaphor">
+                            💡 <strong>Metáfora:</strong> Como conectar un cargador USB sin importar la marca del cargador.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Design Patterns -->
+        <div class="slide">
+            <h1>Patrones de diseño</h1>
+            <div style="text-align: center; margin: 40px 0;">
+                <h2>Elementos</h2>
+                <div class="pattern-elements">
+                    <div class="pattern-element">
+                        <div class="pattern-icon">💬</div>
+                        <div style="font-weight: bold; margin-bottom: 10px;">Nombre del patrón</div>
+                        <div style="color: #666;">Identifica el patrón</div>
+                    </div>
+                    <div class="pattern-element">
+                        <div class="pattern-icon">🔍</div>
+                        <div style="font-weight: bold; margin-bottom: 10px;">Problema</div>
+                        <div style="color: #666;">Situación que resuelve</div>
+                    </div>
+                    <div class="pattern-element">
+                        <div class="pattern-icon">💡</div>
+                        <div style="font-weight: bold; margin-bottom: 10px;">Solución</div>
+                        <div style="color: #666;">Cómo lo resuelve</div>
+                    </div>
+                    <div class="pattern-element">
+                        <div class="pattern-icon">📄</div>
+                        <div style="font-weight: bold; margin-bottom: 10px;">Consecuencias</div>
+                        <div style="color: #666;">Ventajas y desventajas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 50px;">
+                <h2>Clasificación</h2>
+                <div class="pattern-elements" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="tooltip-container">
+                        <div class="pattern-element pattern-classification-card" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white;">
+                            <div class="pattern-icon">🤖</div>
+                            <div style="font-weight: bold;">Patrones Creacionales</div>
+                        </div>
+                        <div class="tooltip">
+                            <strong>🤖 Patrones Creacionales</strong><br>
+                            Se encargan de la <strong>creación de objetos</strong> de manera flexible y reutilizable.<br><br>
+                            <strong>Ejemplos:</strong> Singleton, Factory, Builder, Abstract Factory<br><br>
+                            <strong>Problema que resuelven:</strong> Cómo crear objetos sin especificar sus clases exactas
+                        </div>
+                    </div>
+                    
+                    <div class="tooltip-container">
+                        <div class="pattern-element pattern-classification-card" style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white;">
+                            <div class="pattern-icon">🏗️</div>
+                            <div style="font-weight: bold;">Patrones Estructurales</div>
+                        </div>
+                        <div class="tooltip">
+                            <strong>🏗️ Patrones Estructurales</strong><br>
+                            Se ocupan de la <strong>composición de clases y objetos</strong> para formar estructuras más grandes.<br><br>
+                            <strong>Ejemplos:</strong> Adapter, Decorator, Facade, Composite<br><br>
+                            <strong>Problema que resuelven:</strong> Cómo ensamblar objetos y clases en estructuras flexibles
+                        </div>
+                    </div>
+                    
+                    <div class="tooltip-container">
+                        <div class="pattern-element pattern-classification-card" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); color: white;">
+                            <div class="pattern-icon">🎭</div>
+                            <div style="font-weight: bold;">Patrones de Comportamiento</div>
+                        </div>
+                        <div class="tooltip">
+                            <strong>🎭 Patrones de Comportamiento</strong><br>
+                            Se centran en la <strong>comunicación entre objetos</strong> y la asignación de responsabilidades.<br><br>
+                            <strong>Ejemplos:</strong> Observer, Strategy, Command, State<br><br>
+                            <strong>Problema que resuelven:</strong> Cómo los objetos interactúan y distribuyen responsabilidades
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Antipatterns -->
+        <div class="slide">
+            <h1>Antipatrones: cuando el diseño se vuelve un problema</h1>
+            <div style="text-align: center; margin: 40px 0; background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 30px; border-radius: 15px;">
+                <h2 style="color: white; margin-bottom: 20px;">⚠️ "Mala solución popular"</h2>
+                <p style="font-size: 1.2rem;">Parece correcta, pero genera más problemas</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div>
+                    <h2>Suelen aparecer por:</h2>
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">🚀 Falta de experiencia</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">⏰ Presión por entregar rápido</li>
+                            <li style="padding: 10px 0;">📋 Copiar soluciones sin entenderlas</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>Ejemplos comunes:</h2>
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">🌐 God Object</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">🍝 Spaghetti Code</li>
+                            <li style="padding: 10px 0; border-bottom: 1px solid #dee2e6;">🌋 Lava Flow</li>
+                            <li style="padding: 10px 0;">📝 Copy-paste programming</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Technical Debt Comic -->
+        <div class="slide">
+            <h1>La realidad de la deuda técnica</h1>
+            <div style="display: flex; justify-content: center; align-items: center; height: 60vh;">
+                <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); max-width: 800px; text-align: center;">
+                    <!-- Comic representation -->
+                    <div style="background: linear-gradient(135deg, #f1f2f6 0%, #ddd 100%); padding: 40px; border-radius: 15px; margin-bottom: 30px; position: relative; border: 3px solid #2c3e50;">
+                        <!-- Castle/building in background -->
+                        <div style="position: absolute; top: 20px; left: 20px; font-size: 2rem;">🏰</div>
+                        <div style="position: absolute; top: 30px; right: 30px; font-size: 1.5rem;">⚡🌩️</div>
+                        
+                        <!-- Characters -->
+                        <div style="display: flex; justify-content: space-between; align-items: end; margin-top: 60px;">
+                            <div style="text-align: left;">
+                                <div style="font-size: 3rem; margin-bottom: 10px;">👷‍♂️</div>
+                                <div style="background: white; padding: 15px; border-radius: 15px; border: 2px solid #333; position: relative; max-width: 250px;">
+                                    <div style="position: absolute; bottom: -10px; left: 20px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid white;"></div>
+                                    <strong style="font-size: 1.1rem;">"No sé por qué se tarda tanto en añadir una ventana"</strong>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: right;">
+                                <div style="font-size: 3rem; margin-bottom: 10px;">🧙‍♂️</div>
+                                <div style="background: white; padding: 15px; border-radius: 15px; border: 2px solid #333; position: relative; max-width: 300px;">
+                                    <div style="position: absolute; bottom: -10px; right: 20px; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-top: 10px solid white;"></div>
+                                    <strong style="font-size: 1.1rem;">"Porque primero tenemos que mover esta pared de carga... y esta otra... y reforzar los cimientos..."</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Title at top -->
+                        <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 10px 20px; border-radius: 10px; font-weight: bold;">
+                            Deuda técnica
+                        </div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 25px; border-radius: 15px;">
+                        <h2 style="color: white; margin-bottom: 15px;">💡 La Moraleja</h2>
+                        <p style="font-size: 1.2rem; font-style: italic;">
+                            "Los atajos de hoy son los obstáculos de mañana"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Antipattern Consequences -->
+        <div class="slide">
+            <h1>¿Qué pasa cuando usamos antipatrones?</h1>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin: 60px 0;">
+                <div style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); color: white; padding: 40px; border-radius: 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🐛</div>
+                    <h3>Dificultan el mantenimiento</h3>
+                </div>
+                <div style="background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%); color: white; padding: 40px; border-radius: 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">💰</div>
+                    <h3>Generan deuda técnica</h3>
+                </div>
+                <div style="background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%); color: white; padding: 40px; border-radius: 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">❌</div>
+                    <h3>Aumentan la probabilidad de errores</h3>
+                </div>
+                <div style="background: linear-gradient(135deg, #ff9ff3 0%, #f368e0 100%); color: white; padding: 40px; border-radius: 20px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 20px;">🛑</div>
+                    <h3>Bloquean la evolución del sistema</h3>
+                </div>
+            </div>
+            <div style="text-align: center; background: linear-gradient(135deg, #54a0ff 0%, #2e86de 100%); color: white; padding: 30px; border-radius: 15px;">
+                <h3 style="color: white; margin-bottom: 15px;">💔 Resultado Final</h3>
+                <p style="font-size: 1.2rem;">Crean alto acoplamiento y baja cohesión</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: God Object -->
+        <div class="slide">
+            <h1>God Object: el objeto que lo quiere controlar todo</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                <div>
+                    <div style="background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 30px;">
+                        <h2 style="color: white; margin-bottom: 20px;">⚠️ Características</h2>
+                        <ul style="list-style: none;">
+                            <li style="padding: 8px 0;">• Una sola clase con muchas responsabilidades</li>
+                            <li style="padding: 8px 0;">• Viola SRP (Single Responsibility Principle)</li>
+                            <li style="padding: 8px 0;">• Es difícil de mantener, probar y extender</li>
+                            <li style="padding: 8px 0;">• Muy común en sistemas sin modularización</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-example">
+                        <div class="code-content">
+class Sistema {<br>
+&nbsp;&nbsp;void registrarUsuario() {...}<br>
+&nbsp;&nbsp;void generarReporte() {...}<br>
+&nbsp;&nbsp;void enviarCorreo() {...}<br>
+&nbsp;&nbsp;void procesarPago() {...}<br>
+&nbsp;&nbsp;void validarDatos() {...}<br>
+&nbsp;&nbsp;void conectarDB() {...}<br>
+&nbsp;&nbsp;void renderizarUI() {...}<br>
+}
+                        </div>
+                    </div>
+                    <div style="background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center;">
+                        <strong>🚨 Una clase haciendo todo = Problema</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Spaghetti Code -->
+        <div class="slide">
+            <h1>Spaghetti Code: todo conectado con todo</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                <div>
+                    <div style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h2 style="color: white; margin-bottom: 20px;">🍝 Características</h2>
+                        <ul style="list-style: none;">
+                            <li style="padding: 10px 0;">• Código sin estructura clara</li>
+                            <li style="padding: 10px 0;">• Flujo de ejecución difícil de seguir</li>
+                            <li style="padding: 10px 0;">• Cambiar una parte puede romper muchas otras</li>
+                            <li style="padding: 10px 0;">• Lógica de negocio mezclada</li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px; font-size: 4rem;">
+                        🍝➡️💥
+                    </div>
+                </div>
+                <div>
+                    <div class="code-example">
+                        <div class="code-content">
+if user.is_admin():<br>
+&nbsp;&nbsp;if not banned:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;do_something()<br>
+&nbsp;&nbsp;else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if reason == "X":<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;undo()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;elif check_permission():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if validate_input():<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;process_data()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log_error()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;else:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirect_user()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Lava Flow -->
+        <div class="slide">
+            <h1>Lava Flow: código que ya nadie entiende, pero sigue ahí</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                <div>
+                    <div style="background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%); color: white; padding: 30px; border-radius: 15px;">
+                        <h2 style="color: white; margin-bottom: 20px;">🌋 Características</h2>
+                        <ul style="list-style: none;">
+                            <li style="padding: 10px 0;">• Restos de código antiguo que ya no se usa</li>
+                            <li style="padding: 10px 0;">• Nadie se atreve a borrar</li>
+                            <li style="padding: 10px 0;">• Ocupa espacio y genera confusión</li>
+                            <li style="padding: 10px 0;">• Puede causar errores inesperados</li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🌋</div>
+                        <p style="font-style: italic; color: #666;">"Mejor no lo toco, por si acaso..."</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="code-example">
+                        <div class="code-content">
+# Este método ya no se llama desde ningún lado...<br>
+def calcular_en_base_a_2019():<br>
+&nbsp;&nbsp;# Código legacy de hace 5 años<br>
+&nbsp;&nbsp;# TODO: Revisar si aún se necesita<br>
+&nbsp;&nbsp;return old_calculation()<br><br>
+# Función que se duplicó pero nadie borró<br>
+def procesar_datos_v1():<br>
+&nbsp;&nbsp;pass  # Ya existe procesar_datos_v2()<br><br>
+# Constantes que ya no se usan<br>
+MAGIC_NUMBER_42 = 42  # ¿Para qué era esto?
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Code Problems Exercise -->
+        <div class="slide">
+            <h1>¿Dónde están los problemas en este código?</h1>
+            <div style="text-align: center; margin: 40px 0;">
+                <div style="background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 40px;">
+                    <h2 style="color: white; margin-bottom: 20px;">🔍 Ejercicio Práctico</h2>
+                    <p style="font-size: 1.2rem;">Identifica los antipatrones y violaciones de SOLID en el código</p>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+                <div>
+                    <div class="code-example" style="height: 400px; overflow-y: auto;">
+                        <div class="code-content">
+public class SistemaGestion {<br>
+&nbsp;&nbsp;private Connection db;<br>
+&nbsp;&nbsp;private EmailService email;<br><br>
+&nbsp;&nbsp;public void procesarPedido(String datos) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Validar datos<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if (datos == null) return;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;String[] parts = datos.split(",");<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Conectar base de datos<br>
+&nbsp;&nbsp;&nbsp;&nbsp;db = DriverManager.getConnection("jdbc:...");<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Procesar pedido<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if (parts[0].equals("premium")) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Lógica premium<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;calcularDescuento();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;actualizarInventario();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;generarFactura();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// Lógica normal<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;actualizarInventario();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Enviar email<br>
+&nbsp;&nbsp;&nbsp;&nbsp;email.send("Pedido procesado");<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Log (código legacy)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Log v1.0");<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// TODO: Migrar a nuevo sistema<br>
+&nbsp;&nbsp;}<br><br>
+&nbsp;&nbsp;private void calcularDescuento() { /*...*/ }<br>
+&nbsp;&nbsp;private void actualizarInventario() { /*...*/ }<br>
+&nbsp;&nbsp;private void generarFactura() { /*...*/ }<br>
+}
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 20px;">
+                        <h3 style="color: white; margin-bottom: 15px;">🎯 ¿Qué problemas encuentras?</h3>
+                        <ul style="list-style: none;">
+                            <li style="padding: 5px 0;">• ¿Viola algún principio SOLID?</li>
+                            <li style="padding: 5px 0;">• ¿Hay algún antipatrón presente?</li>
+                            <li style="padding: 5px 0;">• ¿Qué mejorarías?</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; color: #333; padding: 25px; border-radius: 15px; border-left: 5px solid #28a745;">
+                        <h4 style="color: #28a745; margin-bottom: 15px;">💡 Pista</h4>
+                        <p>Piensa en responsabilidades, acoplamiento y código legacy...</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <div style="background: #e3f2fd; color: #1976d2; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #1976d2;">
+                            <h4 style="color: #1976d2; margin-bottom: 10px;">🔗 Repositorio del Proyecto</h4>
+                            <p style="font-size: 0.95rem; margin-bottom: 15px;">Encuentra más ejemplos y ejercicios prácticos:</p>
+                            <code style="background: #f5f5f5; padding: 8px 12px; border-radius: 6px; color: #333; font-size: 0.9rem;">
+                                https://github.com/juliangarzon/patrones_diseno/tree/main
+                            </code>
+                        </div>
+                        <a href="https://github.com/juliangarzon/patrones_diseno/tree/main" 
+                           target="_blank"
+                           style="display: inline-block; background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; transition: transform 0.3s ease;"
+                           onmouseover="this.style.transform='scale(1.05)'"
+                           onmouseout="this.style.transform='scale(1)'">
+                            📚 Abrir repositorio en GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 15: Summary -->
+        <div class="slide">
+            <h1>¿Qué aprendimos hoy y qué sigue?</h1>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 40px 0;">
+                <div>
+                    <h2>✅ Lo que aprendimos:</h2>
+                    <div style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <ul style="list-style: none;">
+                            <li style="padding: 8px 0;">• Qué son los patrones y antipatrones</li>
+                            <li style="padding: 8px 0;">• Principios SOLID como base del diseño</li>
+                            <li style="padding: 8px 0;">• Ejemplos reales de mal diseño</li>
+                            <li style="padding: 8px 0;">• Entrenar el ojo crítico</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <h2>📚 Qué sigue:</h2>
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; margin-top: 20px;">
+                        <p style="margin-bottom: 15px;"><strong>Lectura opcional:</strong></p>
+                        <p style="margin-bottom: 20px;">Capítulo 1 de Head First Design Patterns</p>
+                        <p><strong>Piensa el proyecto integrador:</strong></p>
+                        <ul style="list-style: none; margin-top: 10px;">
+                            <li>• ¿Qué sistema quieres hacer?</li>
+                            <li>• ¿Qué módulos podrías tener?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="https://github.com/juliangarzon/patrones_diseno/tree/main" 
+                   style="display: inline-block; background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%); color: white; padding: 20px 40px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 1.2rem; transition: transform 0.3s ease;"
+                   onmouseover="this.style.transform='scale(1.05)'"
+                   onmouseout="this.style.transform='scale(1)'">
+                    🔗 Repositorio del curso en GitHub
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.style.display = 'none');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].style.display = 'flex';
+            
+            // Add animation
+            slides[currentSlide].style.animation = 'fadeInUp 0.6s ease-out';
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            showSlide(currentSlide - 1);  
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+        
+        // Initialize
+        showSlide(0);
+        
+        // Auto-animate elements when they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.8s ease-out';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all cards and elements
+        document.querySelectorAll('.profile-card, .objective-item, .feature-card, .solid-principle, .pattern-element').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
